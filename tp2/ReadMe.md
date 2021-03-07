@@ -83,12 +83,12 @@ Biensûr, lorsqu'on parle de gestion de conccurence entre plusieurs transactions
 | Timing | Session N° 1 (User1)   | Session N° 2 (User2) |Résultat | 
 | :----: | :----: |:----:|:----:|
 | t0 | ``` SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');``` |||
-| t1 | ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|------|
-| t2 | ------ |```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```|------|
-| t3 | ```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```|------|
+| t1 | ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|Mise à jour des données réussie|
+| t2 | ------ |```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```|Mise à jour des données réussie|
+| t3 | ```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```|La session 1 est bloquée|
 | t4 | ------ |```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Hichem';```|La session 1 va detecter l'interblocage |
 | t5 | ```Commit;``` |------| Session 2: --> 1 row updated.|
-| t6  |```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```| ------|------|
+| t6  |```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```| ------|Mise à jour des données réussie|
 | t7 | ```Commit;```| ------ | --------|
 | t8 | ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
 
@@ -117,14 +117,14 @@ Autrement dit, le développeur déclare qu’une lecture va être suivie d’une
 | Timing | Session N° 1  | Session N° 2 |Résultat | 
 | :----: | :----: |:----:|:----:|
 | t0| ``` SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');``` |||
-| t1 | ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|------|
-| t2 | ------ |```SET TRANSACTION ISOLATION LEVEL READ COMMITTED;```|------|
+| t1 | ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|Mise à jour des données réussie|
+| t2 | ------ |```SET TRANSACTION ISOLATION LEVEL READ COMMITTED;```|Fixer le niveau d'isolation pour la session 2 en READ COMMITTED (Lectures non répétitibles et fantôme).|
 | t3 | ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');```|------|
-| t4 | ------ |```UPDATE EMP SET SAL = 3800 WHERE ENAME ='Mohamed';```|------|
-| t5 | ```Insert into EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,COMM,DEPTNO) values ('9999','Maaoui','Magician',null,to_date('17/02/2021','DD/MM/RR'),null,'10');``` |------|------|
+| t4 | ------ |```UPDATE EMP SET SAL = 3800 WHERE ENAME ='Mohamed';```|Mise à jour des données réussie|
+| t5 | ```Insert into EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,COMM,DEPTNO) values ('9999','Maaoui','Magician',null,to_date('17/02/2021','DD/MM/RR'),null,'10');``` |------|insertion avec succès|
 | t6 | ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
-| t7 | ------ |```UPDATE EMP SET SAL = 5000 WHERE ENAME ='Hichem';```|------|
-| t8 | ```Commit;``` |------|------|
+| t7 | ------ |```UPDATE EMP SET SAL = 5000 WHERE ENAME ='Hichem';```|Le blocage de session 2|
+| t8 | ```Commit;``` |------|Session 2: --> 1 row updated.|
 | t9 | ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
 | t10| ------ |```COMMIT;```|------|
 | t11| ```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|------|
@@ -137,10 +137,10 @@ Autrement dit, le développeur déclare qu’une lecture va être suivie d’une
 | Timing | Session N° 1  | Session N° 2 |Résultat | 
 | :----: | :----: |:----:|:----:|
 | t0| ``` SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');``` |||
-| t1| ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|------|
-| t2| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|------|
+| t1| ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|Mise à jour des données réussie|
+| t2| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|Fixer le niveau d'isolation pour la session 2 en SERIALIZABLE(lecture sale)|
 | t3| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');```|------|
-| t4| ------ |```UPDATE EMP SET SAL = 3800 WHERE ENAME ='Mohamed';```|------|
+| t4| ------ |```UPDATE EMP SET SAL = 3800 WHERE ENAME ='Mohamed';```|Mise à jour des données réussie|
 | t5| ```Insert into EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,COMM,DEPTNO) values ('9999','Maaoui','Magician',null,to_date('17/02/2021','DD/MM/RR'),null,'10');``` |------|------|
 | t6| ```COMMIT;```|------ |------|
 | t7|```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```| ------ |------|
@@ -149,12 +149,12 @@ Autrement dit, le développeur déclare qu’une lecture va être suivie d’une
 | t10|```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```| ------ |------|
 | t11| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
 | t12| ------ | ```COMMIT;```|------|
-| t13| ``` UPDATE EMP SET SAL = 5000 WHERE ENAME ='Maaoui'; ``` |------|------|
+| t13| ``` UPDATE EMP SET SAL = 5000 WHERE ENAME ='Maaoui'; ``` |------|Mise à jour des données réussie|
 | t14| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|------|
 | t15| ------ |```UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui';```|------|
 | t16| ```COMMIT;``` |------|------|
-| t17| ------ |```ROLLBACK;```|------|
-| t18| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|------|
+| t17| ------ |```ROLLBACK;```|Annuler l'ensemble des requêtes faitent après la derniere commit|
+| t18| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|Fixer le niveau d'isolation pour la session 2 en SERIALIZABLE(lecture sale)|
 | t19| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
 | t20| ``` UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui'; ``` |------|------|
 | t21| ```COMMIT;``` |------|------|
