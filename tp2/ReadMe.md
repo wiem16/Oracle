@@ -136,30 +136,30 @@ Autrement dit, le développeur déclare qu’une lecture va être suivie d’une
 
 | Timing | Session N° 1  | Session N° 2 |Résultat | 
 | :----: | :----: |:----:|:----:|
-| t0| ``` SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');``` |||
+| t0| ``` SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');``` ||Mohamed 2000 et Hichem 2800|
 | t1| ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|Mise à jour des données réussie|
 | t2| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|Fixer le niveau d'isolation pour la session 2 en SERIALIZABLE(lecture sale)|
-| t3| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');```|------|
+| t3| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');```|Mohamed 2000 et Hichem 2800|
 | t4| ------ |```UPDATE EMP SET SAL = 3800 WHERE ENAME ='Mohamed';```|Mise à jour des données réussie|
 | t5| ```Insert into EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,COMM,DEPTNO) values ('9999','Maaoui','Magician',null,to_date('17/02/2021','DD/MM/RR'),null,'10');``` |------|insertion avec succès|
 | t6| ```COMMIT;```|------ |------|
-| t7|```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```| ------ |------|
-| t8| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|Mohamed 3800 et Hichem 5000 et Maaoui|
+| t7|```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```| ------ |Mohamed 2000 et Hichem 4000 et Maaoui|
+| t8| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|Mohamed 3800 et Hichem 2800 et Maaoui|
 | t9| ```Commit;``` |------|------|
-| t10|```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```| ------ |------|
-| t11| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
+| t10|```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```| ------ |Mohamed 2000 et Hichem 4000 et Maaoui|
+| t11| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|Mohamed 3800 et Hichem 2800 et Maaoui|
 | t12| ------ | ```COMMIT;```|------|
 | t13| ``` UPDATE EMP SET SAL = 5000 WHERE ENAME ='Maaoui'; ``` |------|Mise à jour des données réussie|
-| t14| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|------|
-| t15| ------ |```UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui';```|------|
-| t16| ```COMMIT;``` |------|------|
+| t14| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|Fixer le niveau d'isolation pour la session 2 en SERIALIZABLE(lecture sale)|
+| t15| ------ |```UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui';```|blockage de la session 2|
+| t16| ```COMMIT;``` |------|can't serialize access for this transaction|
 | t17| ------ |```ROLLBACK;```|Annuler l'ensemble des requêtes faitent après la derniere commit|
 | t18| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|Fixer le niveau d'isolation pour la session 2 en SERIALIZABLE(lecture sale)|
-| t19| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
-| t20| ``` UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui'; ``` |------|------|
+| t19| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|Mohamed 3800 et Hichem 4000 et Maaoui 5000|
+| t20| ``` UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui'; ``` |------|Mise à jour des données réussie|
 | t21| ```COMMIT;``` |------|------|
 | t22| ------ | ```COMMIT;```|------|
-| t23| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
+| t23| ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|Mohamed 3800 et Hichem 4000 et Maaoui 5200|
 
 
 
