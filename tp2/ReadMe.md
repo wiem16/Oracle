@@ -90,7 +90,7 @@ Biensûr, lorsqu'on parle de gestion de conccurence entre plusieurs transactions
 | t5 | ```Commit;``` |------| Session 2: --> 1 row updated.|
 | t6  |```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```| ------|Mise à jour des données réussie|
 | t7 | ```Commit;```| ------ | --------|
-| t8 | ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|------|
+| t8 | ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem', 'Maaoui');```|L'affichage que de Mohamed et Hichem avec leurs salaires|
 
 ## Concurrence : Niveaux d'isolation des transactions
 
