@@ -151,7 +151,7 @@ Autrement dit, le développeur déclare qu’une lecture va être suivie d’une
 | t12| ------ | ```COMMIT;```|------|
 | t13| ``` UPDATE EMP SET SAL = 5000 WHERE ENAME ='Maaoui'; ``` |------|Mise à jour des données réussie|
 | t14| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|Fixer le niveau d'isolation pour la session 2 en SERIALIZABLE(lecture sale)|
-| t15| ------ |```UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui';```|blockage de la session 2|
+| t15| ------ |```UPDATE EMP SET SAL = 5200 WHERE ENAME ='Maaoui';```|blocage de la session 2|
 | t16| ```COMMIT;``` |------|can't serialize access for this transaction|
 | t17| ------ |```ROLLBACK;```|Annuler l'ensemble des requêtes faitent après la derniere commit|
 | t18| ------ |```SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;```|Fixer le niveau d'isolation pour la session 2 en SERIALIZABLE(lecture sale)|
