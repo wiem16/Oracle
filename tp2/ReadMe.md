@@ -116,7 +116,8 @@ Autrement dit, le développeur déclare qu’une lecture va être suivie d’une
 
 | Timing | Session N° 1  | Session N° 2 |Résultat | 
 | :----: | :----: |:----:|:----:|
-| t0| ``` SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');``` ||Mohamed 3000 Hichem 5000|
+| t0| ``` SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');``` ||Mohamed 3000 
+Hichem 5000|
 | t1 | ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|Mise à jour des données réussie|
 | t2 | ------ |```SET TRANSACTION ISOLATION LEVEL READ COMMITTED;```|Fixer le niveau d'isolation pour la session 2 en READ COMMITTED (Lectures non répétitibles et fantôme).|
 | t3 | ------ |```SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');```|Mohamed 3000 Hichem  5000|
