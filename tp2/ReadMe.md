@@ -85,7 +85,7 @@ Biensûr, lorsqu'on parle de gestion de conccurence entre plusieurs transactions
 | t0 | ``` SELECT ENAME, SAL FROM EMP WHERE ENAME IN ('Mohamed','Hichem');``` |||
 | t1 | ``` UPDATE EMP SET SAL = 4000 WHERE ENAME ='Hichem'; ``` |------|Mise à jour des données réussie|
 | t2 | ------ |```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```|Mise à jour des données réussie|
-| t3 | ```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```|La session 1 est bloquée|
+| t3 | ```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```||La session 1 est bloquée|
 | t4 | ------ |```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Hichem';```|La session 1 va detecter l'interblocage |
 | t5 | ```Commit;``` |------| Session 2: --> 1 row updated.|
 | t6  |```UPDATE EMP SET SAL = SAL + 1000 WHERE ENAME ='Mohamed';```| ------|Mise à jour des données réussie|
